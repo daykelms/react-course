@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as courseActions from '../../redux/actions/courseActions';
-import PropTypes from 'prop-types';
-import {bindActionCreators} from "redux";
+import * as courseActions from "../../redux/actions/courseActions";
+import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
 
 class CoursesPage extends React.Component {
   // setting up initial state
+  /*
   state = {
     course: {
       title: ""
@@ -22,46 +23,43 @@ class CoursesPage extends React.Component {
     this.props.actions.createCourse(this.state.course)
     
   };
+*/
 
+  componentDidMount() {
+    this.props.actions.loadCourses().catch(error => {
+      alert("Loading courses failed" + error);
+    });
+  }
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <section>
         <h2>Courses</h2>
-        <h3>Add Course</h3>
-        <input
-          type="text"
-          onChange={this.handleChange} // calling function to pass the title value
-          value={this.state.course.title}
-        />
-        <input type="submit" value="Save" />
-        { this.props.courses.map(course =>(
-            <div key={course.title}>{course.title}</div> // keys help react track each array element
+        {this.props.courses.map(course => (
+          <div key={course.title}>{course.title}</div> // keys help react track each array element
         ))}
-      </form>
+      </section>
     );
   }
 }
 
 CoursesPage.propTypes = {
-    courses: PropTypes.array.isRequired,
-    actions: PropTypes.func.isRequired
+  courses: PropTypes.array.isRequired,
+  actions: PropTypes.func.isRequired
 };
 
-
 // This function determines what state is passed to our component via props
-function mapStateToProps(state) { // ownProps uses props that has been attached to the component (CoursePage)
+function mapStateToProps(state) {
+  // ownProps uses props that has been attached to the component (CoursePage)
   return {
     courses: state.courses // Be specific. Request only the data your component needs
   };
 }
 // return create course action. Is important call dispatch as a wrapper for the action creator
 function mapDispatchToProps(dispatch) {
-  return{
+  return {
     actions: bindActionCreators(courseActions, dispatch)
   };
-  
 }
-
 
 export default connect(
   mapStateToProps,
